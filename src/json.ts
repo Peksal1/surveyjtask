@@ -1,81 +1,156 @@
-export const surveyJson  = {
-    "title": "Surve Test",
-    "description": "My first Survey project",
-    "logoWidth": "auto",
-    "logoHeight": "80",
-    "completedHtml": "<div style=\"max-width:688px;text-align:center;margin: 16px auto;\">\n\n<div style=\"padding:0 24px;\">\n<h4>Thank you for choosing us.</h4>\n<br>\n<p>Dear {firstname-for-complete-page}, we're thrilled to have you on board and excited to be a part of your upcoming journey. Your reservation is confirmed, and we can't wait to make your travel experience exceptional.</p>\n</div>\n\n</div>\n",
-    "pages": [
-     {
-      "name": "page1",
+export const surveyJson = {
+  title: "Project Budget Tracker",
+  description: "Track project expenses and budgets",
+  pages: [
+    {
+      name: "main_page",
       elements: [
-         {
-           type: 'dropdown',
-           name: 'project',
-           title: 'Project:',
-           isRequired: true,
-           width: '30%',
-           minWidth: '200px',
-           choices: [
-             { value: 'project_a', text: 'Project A' },
-             { value: 'project_b', text: 'Project B' },
-             { value: 'project_c', text: 'Project C' },
-           ],
-           renderAs: 'select',
-           validators: [
-             {
-               type: 'expression',
-               text: 'This project has reached the maximum number of entries (10)',
-               expression: 'validateProjectSelection({project}, {entries})',
-             },
-           ],
-         },
-         {
-           type: 'dropdown',
-           name: 'category',
-           title: 'Category:',
-           isRequired: true,
-           width: '30%',
-           minWidth: '200px',
-           startWithNewLine: false,
-           choices: [
-             { value: 'category_a', text: 'Category A' },
-             { value: 'category_b', text: 'Category B' },
-             { value: 'category_c', text: 'Category C' },
-           ],
-           renderAs: 'select',
-           visibleIf: '{project} notempty',
-         },
-         {
-           type: 'text',
-           name: 'amount',
-           title: 'Amount:',
-           isRequired: true,
-           width: '25%',
-           minWidth: '150px',
-           startWithNewLine: false,
-           inputType: 'number',
-           validators: [
-             {
-               type: 'expression',
-               text: 'Amount must be at least $0.01',
-               expression: 'validateMinAmount({amount}, 0.01)',
-             },
-             {
-               type: 'expression',
-               text: 'Amount must be within budget range ($1 - $10,000)',
-               expression: 'isWithinBudget({amount}, 1, 10000)',
-             },
-           ],
-         },
-       ]
-     },
-    ],
-    "calculatedValues": [{
-       "name": "firstname-for-complete-page",
-       "expression": "iif({first-name} notempty, {first-name}, guests)"
-    }],
-    "showPrevButton": false,
-    "questionErrorLocation": "bottom",
-    "widthMode": "static",
-    "width": "904"
-   };
+        {
+          type: "panel",
+          name: "entry_panel",
+          title: "Add New Entry",
+          elements: [
+            {
+              type: "dropdown",
+              name: "project",
+              title: "Project:",
+              isRequired: true,
+              width: "30%",
+              choices: [
+                { value: "project_a", text: "Project A" },
+                { value: "project_b", text: "Project B" },
+                { value: "project_c", text: "Project C" }
+              ]
+            },
+            {
+              type: "dropdown",
+              name: "category",
+              title: "Category:",
+              isRequired: true,
+              width: "30%",
+              startWithNewLine: false,
+              visibleIf: "{project} notempty",
+              choices: [
+                { value: "category_a", text: "Category A" },
+                { value: "category_b", text: "Category B" },
+                { value: "category_c", text: "Category C" }
+              ]
+            },
+            {
+              type: "text",
+              name: "amount",
+              title: "Amount:",
+              isRequired: true,
+              width: "25%",
+              inputType: "number",
+              startWithNewLine: false
+            },
+            {
+              type: "html",
+              name: "form_actions_row",
+              html: `
+                <div style="display: flex; justify-content: space-between; gap: 1rem;">
+                  <button type="button" class="btn btn-danger" id="clearFormBtn">Clear Form</button>
+                  <button type="button" class="btn btn-primary" id="addEntryBtn" style="display: none;">Add Entry</button>
+                </div>
+              `
+            }
+          ]
+        },
+        {
+          type: "panel",
+          name: "entries_panel",
+          title: "Project Entries",
+          visibleIf: "{entries.length} > 0",
+          elements: [
+            {
+              type: "matrixdynamic",
+              name: "entries",
+              titleLocation: "hidden",
+              columns: [
+                {
+                  name: "project",
+                  title: "Project",
+                  cellType: "dropdown",
+                  choices: [
+                    { value: "project_a", text: "Project A" },
+                    { value: "project_b", text: "Project B" },
+                    { value: "project_c", text: "Project C" }
+                  ]
+                },
+                {
+                  name: "category",
+                  title: "Category",
+                  cellType: "dropdown",
+                  choices: [
+                    { value: "category_a", text: "Category A" },
+                    { value: "category_b", text: "Category B" },
+                    { value: "category_c", text: "Category C" }
+                  ]
+                },
+                {
+                  name: "amount",
+                  title: "Amount",
+                  cellType: "text",
+                  inputType: "number"
+                },
+                {
+                  name: "timestamp",
+                  title: "Date Added",
+                  cellType: "expression",
+                  expression: "{row.timestamp}"
+                }
+              ],
+              allowAddRows: false,
+              allowRemoveRows: true,
+              showHeader: true
+            }
+          ]
+        },
+        {
+          type: "panel",
+          name: "summary_panel",
+          title: "Project Summary",
+          visibleIf: "{entries.length} > 0",
+          elements: [
+            {
+              type: "expression",
+              name: "project_a_total",
+              title: "Project A Total:",
+              expression: "projectSum({entries}, 'project_a')",
+              displayStyle: "currency",
+              currency: "USD",
+              visibleIf: "projectSum({entries}, 'project_a') > 0"
+            },
+            {
+              type: "expression",
+              name: "project_b_total",
+              title: "Project B Total:",
+              expression: "projectSum({entries}, 'project_b')",
+              displayStyle: "currency",
+              currency: "USD",
+              visibleIf: "projectSum({entries}, 'project_b') > 0"
+            },
+            {
+              type: "expression",
+              name: "project_c_total",
+              title: "Project C Total:",
+              expression: "projectSum({entries}, 'project_c')",
+              displayStyle: "currency",
+              currency: "USD",
+              visibleIf: "projectSum({entries}, 'project_c') > 0"
+            },
+            {
+              type: "expression",
+              name: "grand_total",
+              title: "Grand Total:",
+              expression: "totalSum({entries})",
+              displayStyle: "currency",
+              currency: "USD"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+};
