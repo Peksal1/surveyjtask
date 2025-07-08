@@ -16,9 +16,7 @@ export class AppComponent implements OnInit {
   surveyModel!: Model;
 
   ngOnInit() {
-    // Register custom functions before creating the survey model
     this.registerCustomFunctions();
-
     const survey = new Model(surveyJson);
     survey.applyTheme(LayeredDarkPanelless);
     survey.showCompleteButton = false;
@@ -51,7 +49,6 @@ export class AppComponent implements OnInit {
   }
 
   private registerCustomFunctions() {
-    // Function to sum amounts for a specific project
     FunctionFactory.Instance.register("projectSum", (params: any[]) => {
       if (!params || params.length < 2) return 0;
       
@@ -68,7 +65,6 @@ export class AppComponent implements OnInit {
         }, 0);
     });
 
-    // Function to calculate total sum of all entries
     FunctionFactory.Instance.register("totalSum", (params: any[]) => {
       if (!params || params.length < 1) return 0;
       
@@ -81,6 +77,17 @@ export class AppComponent implements OnInit {
         return sum + amount;
       }, 0);
     });
+
+    FunctionFactory.Instance.register("hasEntriesForProject", (params: any[]) => {
+      if (!params || params.length < 2) return false;
+
+      const entries = params[0];
+      const projectId = params[1];
+
+      if (!Array.isArray(entries)) return false;
+
+      return entries.some((entry: any) => entry.project === projectId);
+    });
   }
 
   private updateAddButtonVisibility(survey: Model, addBtn: HTMLElement | null) {
@@ -90,7 +97,7 @@ export class AppComponent implements OnInit {
     const category = survey.getValue("category");
     const amount = survey.getValue("amount");
 
-    const shouldShow = !!project && !!category && !!amount;
+    const shouldShow = !!project && !!category && amount !== undefined;
     addBtn.style.display = shouldShow ? "inline-block" : "none";
   }
 

@@ -72,6 +72,7 @@ export const surveyJson = {
                   name: "project",
                   title: "Project",
                   cellType: "dropdown",
+                  enableIf: "false",
                   choices: [
                     { value: "project_a", text: "Project A" },
                     { value: "project_b", text: "Project B" },
@@ -116,37 +117,41 @@ export const surveyJson = {
             {
               type: "expression",
               name: "project_a_total",
-              title: "Project A Total:",
+              title: "Project A Total: ",
               expression: "projectSum({entries}, 'project_a')",
               displayStyle: "currency",
               currency: "USD",
-              visibleIf: "projectSum({entries}, 'project_a') > 0"
+              visibleIf: "hasEntriesForProject({entries}, 'project_a')",
+              titleLocation: "left"
             },
             {
               type: "expression",
               name: "project_b_total",
-              title: "Project B Total:",
+              title: "Project B Total: ",
               expression: "projectSum({entries}, 'project_b')",
               displayStyle: "currency",
               currency: "USD",
-              visibleIf: "projectSum({entries}, 'project_b') > 0"
+              visibleIf: "hasEntriesForProject({entries}, 'project_b')",
+              titleLocation: "left"
             },
             {
               type: "expression",
               name: "project_c_total",
-              title: "Project C Total:",
+              title: "Project C Total: ",
               expression: "projectSum({entries}, 'project_c')",
               displayStyle: "currency",
               currency: "USD",
-              visibleIf: "projectSum({entries}, 'project_c') > 0"
+              visibleIf: "hasEntriesForProject({entries}, 'project_c')",
+              titleLocation: "left"
             },
             {
               type: "expression",
               name: "grand_total",
-              title: "Grand Total:",
+              title: "Grand Total: ",
               expression: "totalSum({entries})",
               displayStyle: "currency",
-              currency: "USD"
+              currency: "USD",
+              titleLocation: "left"
             }
           ]
         }
