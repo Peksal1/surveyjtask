@@ -72,12 +72,12 @@ export const surveyJson = {
                   name: "project",
                   title: "Project",
                   cellType: "dropdown",
-                  enableIf: "false",
                   choices: [
                     { value: "project_a", text: "Project A" },
                     { value: "project_b", text: "Project B" },
                     { value: "project_c", text: "Project C" }
-                  ]
+                  ],
+                  allowClear: 'false'
                 },
                 {
                   name: "category",
@@ -87,7 +87,8 @@ export const surveyJson = {
                     { value: "category_a", text: "Category A" },
                     { value: "category_b", text: "Category B" },
                     { value: "category_c", text: "Category C" }
-                  ]
+                  ],
+                  allowClear: 'false',
                 },
                 {
                   name: "amount",
